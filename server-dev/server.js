@@ -14,6 +14,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
+const PORT= process.env.PORT || 10000;
 /******************************************************
  *    Mit Mongoose verbinden
  ******************************************************/
@@ -58,6 +59,6 @@ app.use("/", marketRouter);
  *   Server starten
  * ******************************************************/
 
-app.listen(5500, () => {
-  console.log("Server läuft auf Port 5500");
+app.listen(PORT, () => {
+  console.log(`Server läuft auf Port ${PORT}`);
 });
