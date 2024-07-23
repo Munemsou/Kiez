@@ -1,0 +1,54 @@
+.navbar {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.dark-mode {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.logo-and-title {
+  display: flex;
+  align-items: center;
+}
+
+.logo-placeholder {
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+}
+
+.nav-items button {
+
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-menu a {
+  padding: 15px 10px;
+}
+
+/* Passt den dunklen Modus der Dropdown-Menüs an */
+.dark-mode .dropdown-menu {
+  background: rgba(0, 0, 0, 0.349);
+}
+

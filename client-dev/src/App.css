@@ -1,0 +1,148 @@
+*{
+    color: black;
+    font-family: "Roboto"
+}
+
+@media (min-width: 768px) {
+    .mobile\:hidden {
+        display: block !important;
+    }
+} 
+
+
+.darkThemeColor,
+.dropdown-menu a{
+    background-color: #334155;
+    color:#e5e7eb ;
+    background-attachment: fixed;
+}
+.lightThemeColor,
+.dropdown-menu a{
+    background-color: #e5e7eb;
+    color: #334155;
+}
+
+.mobileNav{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+}
+.mobileNavLi{
+
+    height: 100%;
+    background-color: #334155;
+}
+.mobileNavLi a{
+    
+    color: #e2e8f0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.mobileNavLi a:hover{
+    color: tomato;
+    transform :scale(1.1) ;
+    transition: .5s;
+    border-bottom: tomato 1px solid;
+}
+
+@media (min-width: 768px) {
+    .mobile\:hidden {
+        display: block !important;
+    }
+} 
+
+.desktopNavLi{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+} 
+.desktopNavLi a{
+    padding: .5rem;   
+    
+    flex-grow:1;
+}
+.desktopNavLi a:hover{ 
+    text-decoration: underline;
+    color: tomato;
+}
+
+.show{
+    display:block;
+    /* border: solid black 2px; */
+    /* height: 14rem; */
+    width: fit-content;
+    position: fixed;
+    top: 1rem;
+    right: 3rem;
+}
+
+.show button{
+
+    /* text-align:center; */
+    /* position: absolute; */
+    /* right: .5rem; */
+        color: #334155;
+}
+
+/* .dropDownProfile{
+    position: absolute;
+    top: 4rem;
+    right: 1.5rem;
+    width: 6rem;
+    padding: 15px;
+    border: 1px solid gray;
+    border-radius: 8px;
+}
+
+.dropDownProfile::before{
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    right: 1.1rem;
+    width: 20px;
+    height: 20px;
+    transform: rotate(45deg);
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
+} */
+
+/* HEADER DROPDOWN PROFILE */
+/* .hide-profile{
+    cursor: pointer;
+}
+.hide-profile:hover{
+    cursor: pointer;
+    text-decoration: underline;
+} */
+
+.btn-profile{
+    display: flex;
+    position: relative;
+    
+    
+}
+
+/* update-profile */
+.update-profile{
+    background-color: #edede9;
+    color: black;
+    font-weight: bold;
+    border: #334155 solid 1px;
+    /* margin-bottom: 10px; */
+    /* height: 100%; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* margin-top: 5rem; */
+    padding: 2rem;
+}
+

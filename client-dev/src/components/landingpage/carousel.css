@@ -1,0 +1,77 @@
+.custom-carousel .carousel-container {
+  max-width: 100%;
+  position: relative;
+  height: 250px;
+}
+
+.custom-carousel .carousel-prev,
+.custom-carousel .carousel-next {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  width: 60px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.custom-carousel .carousel-prev {
+  left: 0;
+}
+
+.custom-carousel .carousel-prev::after,
+.custom-carousel .carousel-next::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 5px;
+}
+
+.custom-carousel .carousel-prev::after {
+  transform: translateY(-50%) rotate(135deg);
+  left: 20px;
+}
+
+.custom-carousel .carousel-next {
+  right: 0;
+}
+
+.custom-carousel .carousel-next::after {
+  transform: translateY(-50%) rotate(-45deg);
+  right: 20px;
+}
+
+.custom-carousel .carousel-images {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  height: 300px;
+  max-width: 100%;
+}
+
+.custom-carousel .carousel-image {
+  min-width: 100%;
+  max-width: 1000px;
+  height: 300px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: 2s ease-in-out;
+}
+
+.custom-carousel .carousel-image.opacity-100 {
+  opacity: 1;
+}
+
+.custom-carousel .carousel-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

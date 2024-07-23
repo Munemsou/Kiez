@@ -1,0 +1,193 @@
+/* --------------  Buttons  ------------------ */
+
+
+/* --------------  Buttons  ------------------ */
+.reusableBox {
+    
+  
+
+}
+
+
+
+/* --------------  Blur  ------------------ */
+.reusableBlur {
+    backdrop-filter: blur(5px);
+}
+
+
+/* --------------  Container  ------------------ */
+.reusableContainer {
+     background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+     box-shadow: 0 25px 45px rgba(0,0,0,0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px; 
+}
+
+.reusableBorder {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transition: transform 0.3s ease-in-out, 
+}
+
+.reusableBorder:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* --------------  Background  ------------------ */
+
+.reusableGlobalBackground {
+    filter: blur(250px);
+}
+
+section .reusableGlobalBackground:nth-child(1){
+    width: 600px;
+    height: 600px;
+    background: #9b1499;
+}
+
+section .reusableGlobalBackground:nth-child(2){
+    bottom: -150px;
+    left: 100px;
+    width: 300px;
+    height: 600px;
+    background: #2027e6;
+}
+
+section .reusableGlobalBackground:nth-child(3){
+    bottom: 150px;
+    right: 100px;
+    width: 600px;
+    height: 400px;
+    background: #20b0e6;
+    }
+
+/* --------------  Background  ------------------ */
+
+.reusableGlobalBackground2 {
+    filter: blur(250px);
+}
+
+section .reusableGlobalBackground2:nth-child(1) {
+    width: 600px;
+    height: 600px;
+    background: #1d1c1cd5; /* Helles Blau */
+}
+
+section .reusableGlobalBackground2:nth-child(2) {
+    bottom: -150px;
+    left: 100px;
+    width: 600px;
+    height: 600px;
+    background: #7331a1; /* Helles Lavendel */
+}
+
+section .reusableGlobalBackground2:nth-child(3) {
+    bottom: 150px;
+    right: 100px;
+    width: 600px;
+    height: 400px;
+    background: #FAF0E6; /* Helles Beige */
+}
+
+
+    /* --------------  Animated Squares  ------------------ */
+
+.reusableSquareWrapper {
+    /* position: relative; */
+   }
+
+.reusableSquareDash{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 25px 45px rgba(0,0,0,0,1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1) ;
+    border-radius: 10px;
+    animation: animate 10s linear infinite;
+    animation-delay: calc(-1s * var(--i));
+}
+@keyframes animate {
+    0%, 100%{
+        transform: translateY(-40px);
+    }
+    50%{
+        transform: translateY(40px);
+    }
+}
+
+.reusableSquareDash:nth-child(1){
+      top: 80px;
+    right: -550px;
+    width: 250px;
+    height: 250px;
+}
+
+.reusableSquareDash:nth-child(2){
+    top: 550px;
+    left: -120px;
+    width: 140px;
+    height: 140px;
+    z-index: 2;
+}
+
+.reusableSquareDash:nth-child(3){
+    top: 550px;
+    right: -550px;
+    width: 180px;
+    height: 180px;
+    z-index: 2;
+}
+
+.reusableSquareDash:nth-child(4){
+  top: 150px;
+    left: -110px;
+    width: 150px;
+    height: 150px;
+    z-index: 2;
+}
+
+.reusableSquareDash:nth-child(5){
+    bottom: -130px;
+    right: -200px;
+    width: 100px;
+    height: 100px;
+}
+
+  /* --------------  BARHEADERS (Gruppen erstellen, Suchen Sortieren Filter BOX)  ------------------ */
+/* --------------  bar für Groups und Market  ------------------ */
+
+.reusableHeaderBar {
+    background: rgba(255, 255, 255, 0.1); 
+    backdrop-filter: blur(10px); 
+    border-radius: 10px; 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+}
+
+.reusableHeaderBar:hover {
+    transform: translateY(-2px); /* Leichtes Anheben beim Hovern */
+    background: rgba(255, 255, 255, 0.2); /* Etwas weniger Transparenz beim Hover */
+}
+
+
+
+
+
+    /* --------------  FONTS  ------------------ */

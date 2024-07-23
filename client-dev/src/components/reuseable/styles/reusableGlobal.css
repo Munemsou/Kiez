@@ -1,0 +1,188 @@
+/* --------------  Buttons  ------------------ */
+
+
+/* --------------  Buttons  ------------------ */
+
+
+
+
+/* --------------  Blur  ------------------ */
+.reusableBlur {
+    backdrop-filter: blur(5px);
+}
+
+
+/* --------------  Container  ------------------ */
+.reusableContainer {
+     background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+     box-shadow: 0 25px 45px rgba(0,0,0,0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px; 
+}
+
+.reusableBorder {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transition: transform 0.3s ease-in-out, 
+}
+
+.reusableBorder:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* --------------  Background  ------------------ */
+
+.reusableGlobalBackground {
+    filter: blur(200px);
+}
+
+section .reusableGlobalBackground:nth-child(1){
+    width: 600px;
+    height: 600px;
+    background: #9b1499;
+}
+
+section .reusableGlobalBackground:nth-child(2){
+    bottom: -150px;
+    left: 100px;
+    width: 300px;
+    height: 300px;
+    background: #181fe7;
+}
+
+section .reusableGlobalBackground:nth-child(3){
+    bottom: 150px;
+    right: 100px;
+    width: 600px;
+    height: 400px;
+    background: #f3b712;
+    }
+    section .reusableGlobalBackground:nth-child(4){
+        top: 150px;
+        right: 100px;
+        width: 600px;
+        height: 400px;
+        background: #12b7f3;
+        }
+/* --------------  Background  ------------------ */
+
+.reusableGlobalBackground2 {
+    filter: blur(250px);
+}
+
+section .reusableGlobalBackground2:nth-child(1) {
+    width: 600px;
+    height: 600px;
+    background: #1d1c1cd5; /* Helles Blau */
+}
+
+section .reusableGlobalBackground2:nth-child(2) {
+    bottom: -150px;
+    left: 100px;
+    width: 600px;
+    height: 600px;
+    background: #7331a1; /* Helles Lavendel */
+}
+
+section .reusableGlobalBackground2:nth-child(3) {
+    bottom: 150px;
+    right: 100px;
+    width: 600px;
+    height: 400px;
+    background: #FAF0E6; /* Helles Beige */
+}
+
+
+    /* --------------  Animated Squares  ------------------ */
+
+
+.reusableSquare{
+   /*  position: absolute; */
+    backdrop-filter: blur(5px);
+    box-shadow: 0 25px 45px rgba(0,0,0,0,1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1) ;
+    border-radius: 10px;
+    animation: animate 10s linear infinite;
+    animation-delay: calc(-1s * var(--i));
+}
+@keyframes animate {
+    0%, 100%{
+        transform: translateY(-40px);
+    }
+    50%{
+        transform: translateY(40px);
+    }
+}
+
+.reusableSquare:nth-child(1){
+    top: -180px;
+    right: -100px;
+    width: 250px;
+    height: 250px;
+}
+
+.reusableSquare:nth-child(2){
+    top: 150px;
+    left: -100px;
+    width: 120px;
+    height: 120px;
+    z-index: 2;
+}
+
+.reusableSquare:nth-child(3){
+    top: 250px;
+    right: -220px;
+    width: 180px;
+    height: 180px;
+    z-index: 2;
+}
+
+.reusableSquare:nth-child(4){
+    bottom: -130px;
+    right: 330px;
+    width: 150px;
+    height: 150px;
+}
+
+.reusableSquare:nth-child(4){
+    bottom: -130px;
+    right: 330px;
+    width: 150px;
+    height: 150px;
+}
+
+  /* --------------  BARHEADERS (Gruppen erstellen, Suchen Sortieren Filter BOX)  ------------------ */
+/* --------------  bar für Groups und Market  ------------------ */
+
+.reusableHeaderBar {
+    background: rgba(255, 255, 255, 0.1); 
+    backdrop-filter: blur(10px); 
+    border-radius: 10px; 
+    border: 1px solid rgba(253, 248, 248, 0.466); 
+    box-shadow: 1px 4px 16px rgb(0, 0, 0); 
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+}
+
+.reusableHeaderBar:hover {
+    transform: translateY(-2px); /* Leichtes Anheben beim Hovern */
+    background: rgba(255, 255, 255, 0.3); /* Etwas weniger Transparenz beim Hover */
+}
+
+
+
+
+
+    /* --------------  FONTS  ------------------ */

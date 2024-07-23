@@ -1,0 +1,96 @@
+/* ToDo : CSS für Checkbox */
+/* .inputBox ist derzeit NICHT in gebrauch */
+
+
+
+
+
+
+
+/* --------------  Form  ------------------ */
+.reusableForm{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+}
+/* --------------  inputBox  ------------------ */
+.reusableInputBox{
+    width: 100%;
+    margin-top: 20px;
+}
+/* --------------  input  ------------------ */
+.reusableInput{
+    width: 100%;
+    background: rgba(225, 225, 225, 0.5);
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    border-radius: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* --------------  textarea  ------------------ */
+.reusableTextarea{
+    width: 100%;
+    background: rgba(225, 225, 225, 0.5);
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    border-radius: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* --------------  Buttons  ------------------ */
+
+
+.reusableFormBtn {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 35px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgb(10, 10, 10);
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    outline: none;
+}
+
+.reusableFormBtn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.07);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* --------------  H3  ------------------ */
+
+.reusableH3 {
+    background: rgba(255, 255, 255, 0.2); /* Leichte Transparenz */
+    backdrop-filter: blur(10px); /* Hintergrundunschärfe für den Glaseffekt */
+    border-radius: 10px; /* Abgerundete Ecken */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Leicht sichtbare Grenze */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtiler Schatten */
+    transition: all 0.3s ease-in-out; /* Weicher Übergang für Hover-Effekt */
+}
+
+.reusableH3:hover {
+    transform: scale(1.01); /* Leichtes Vergrößern beim Hover */
+    background: rgba(255, 255, 255, 0.25); /* Etwas weniger Transparenz beim Hover */
+}
+
