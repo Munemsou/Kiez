@@ -62,6 +62,6 @@ app.use("/", marketRouter);
  *   Server starten
  * ******************************************************/
 
-app.listen(PORT, '0.0.0.0',() => {
-  console.log(`Server läuft auf Port http://0.0.0.0:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server läuft auf Port ${PORT}`);
 });
