@@ -14,7 +14,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
-const PORT= process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000;
 /******************************************************
  *    Mit Mongoose verbinden
  ******************************************************/
@@ -37,9 +37,11 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://kiez.onrender.com'],
+    origin: ["http://localhost:5173", "https://kiez.onrender.com"],
     // URL unseres Frontends || onrender deployed
     credentials: true, // erlaube Cookie-Austausch
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    optionsSuccessStatus: 204,
   })
 );
 
