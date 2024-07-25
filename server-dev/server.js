@@ -37,7 +37,8 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // URL unseres Frontends
+    origin: ['http://localhost:5173', 'https://kiez.onrender.com'],
+    // URL unseres Frontends || onrender deployed
     credentials: true, // erlaube Cookie-Austausch
   })
 );
