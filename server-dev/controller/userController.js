@@ -60,9 +60,6 @@ export const registerController = async (req, res) => {
  *    loginController
  ******************************************************/
 
-import UserModell from "../models/userSchema.js";
-import bcrypt from "bcrypt";
-import { generateToken } from "./jwtController.js";
 
 export const loginController = async (req, res, next) => {
   try {
