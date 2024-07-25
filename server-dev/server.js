@@ -40,7 +40,7 @@ app.use(
     origin: ["http://localhost:5173", "https://kiez.onrender.com"],
     // URL unseres Frontends || onrender deployed
     credentials: true, // erlaube Cookie-Austausch
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "GET,POST",
     optionsSuccessStatus: 204,
   })
 );
@@ -62,6 +62,6 @@ app.use("/", marketRouter);
  *   Server starten
  * ******************************************************/
 
-app.listen(PORT, () => {
-  console.log(`Server läuft auf Port ${PORT}`);
+app.listen(PORT, '0.0.0.0',() => {
+  console.log(`Server läuft auf Port http://0.0.0.0:${PORT}`);
 });
