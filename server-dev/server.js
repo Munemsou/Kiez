@@ -40,7 +40,7 @@ app.use(
     origin: ["http://localhost:5173", "https://kiez.onrender.com"],
     // URL unseres Frontends || onrender deployed
     credentials: true, // erlaube Cookie-Austausch
-    methods: "GET,POST",
+    methods: "GET, POST, PATCH, PUT, DELETE",
     optionsSuccessStatus: 204,
   })
 );
