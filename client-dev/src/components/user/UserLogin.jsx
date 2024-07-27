@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"; // Importing useNavigate hook for navigation
-import { postDate } from "../reuseable/fetchData.jsx"; // Importing postDate function for making API requests
+import { postData } from "../reuseable/fetchData.jsx"; // Importing postData function for making API requests
 import "../reuseable/styles/reusableFormComponents.css"; // Importing styles
 import "../reuseable/styles/reusableGlobal.css"; // Importing global styles
 import { useContext, useState } from "react"; // Importing useContext and useState hooks from React
@@ -22,7 +22,7 @@ const UserLogin = () => {
     const body = { email, password }; // Constructing the body object from state
 
     try {
-      const data = await postDate("login", body); // Making API request to login endpoint
+      const data = await postData("login", body); // Making API request to login endpoint
       console.log({ data }); // Logging the response for debugging
 
       setUserData(data.user); // Setting user data in context

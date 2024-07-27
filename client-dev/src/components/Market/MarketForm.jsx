@@ -3,7 +3,7 @@ import { UserContext } from "../context/userContext.jsx";
 import CurrencyInput from "react-currency-input-field";
 
 import { useNavigate } from "react-router-dom";
-// import { postDate } from "../reuseable/fetchData.jsx";
+// import { postData } from "../reuseable/fetchData.jsx";
 import { handleImageUpload } from "../reuseable/imgToString.jsx";
 
 const MarketForm = () => {

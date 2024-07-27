@@ -6,7 +6,7 @@
  * @returns {Promise<Object>} - The response data from the server.
  * @throws {Error} - Throws an error if the request fails or times out.
  */
-export const postDate = async (path, data) => {
+export const postData = async (path, data) => {
   // Determine the base URL based on the environment
   // If in development mode, use the local URL; otherwise, use the production URL
   const baseUrl = process.env.NODE_ENV === 'development'
