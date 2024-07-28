@@ -3,54 +3,67 @@
  *    für login
  ******************************************************/
 import bcrypt from "bcrypt";
-import UserModell from "../models/userSchema.js";
+import UserModel from "../models/userSchema.js";
 import jwt from "jsonwebtoken";
 
 export const authenticateUser = async (req, res, next) => {
-  // 1. Extrahiere Benutzername und Passwort aus dem Anforderungskörper
-  const { email, password } = req.body;
-  // 2. Suche nach dem Benutzer mit dem angegebenen Benutzernamen in der Datenbank
-  const user = await UserModell.findOne({ email });
+  try {
+    // 1. Extract email and password from the request body
+    const { email, password } = req.body;
 
-  // 3. Wenn kein Benutzer mit dem angegebenen Benutzernamen gefunden wurde, sende einen Fehler zurück
-  if (!user) {
-    const error = new Error("User not found");
-    error.statusCode = 401; // Unautorisiert
-    throw error;
+    // 2. Validate input fields
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    // 3. Find user by email
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    // 4. Check if password matches
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: "Incorrect password" });
+    }
+
+    // 5. Attach user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error); // Delegate to error handling middleware
   }
-
-  // 4. Überprüfe, ob das angegebene Passwort mit dem Passwort des Benutzers übereinstimmt
-  const match = await bcrypt.compare(password, user.password);
-
-  // 5. Wenn das Passwort nicht übereinstimmt, sende einen Fehler zurück
-  if (!match) {
-    const error = new Error("Incorrect password");
-    error.statusCode = 401; // Unautorisiert
-    throw error;
-  }
-
-  // 6. Wenn alles erfolgreich ist, rufe die nächste Middleware oder den Controller auf
-  next();
 };
+
 
 /******************************************************
  *    authorizeUser
  *    wenn der user eingeloggt ist
  ******************************************************/
-export const authorizeUser = (req, res, next) => {
-  // 1. wir nehmen den jwt aus dem Request
-  const token = req.cookies.token;
 
-  // 2. Wenn es keinen token gibt, senden wir einen fehler zurück
-  if (!token) return res.send("no cookie found. you are not authorized.");
-  // 3. wenn es einen token gibt, versuchen wir ihn zu verifizieren
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    // 4. bei einem fehler, senden wir einen error zurück
-    if (err) return res.send("falscher token");
-    // wir wollen den user in der nächsten middleware verwenden.
-    req.user = user;
-    // console.log("req.user authController", user);
-    // 5. wenn alles geklappt hat, führen wir next() aus.
-    next();
-  });
+export const authorizeUser = async (req, res, next) => {
+  try {
+    // 1. Get token from cookies
+    const token = req.cookies.token;
+
+    // 2. Check if token exists
+    if (!token) {
+      return res.status(401).json({ error: "No token found. You are not authorized." });
+    }
+
+    // 3. Verify token
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: "Invalid token" });
+      }
+
+      // 4. Attach user to request object
+      req.user = user;
+      next();
+    });
+  } catch (error) {
+    next(error); // Delegate to error handling middleware
+  }
 };
+
