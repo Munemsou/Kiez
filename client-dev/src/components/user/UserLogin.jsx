@@ -1,36 +1,33 @@
-import { useNavigate } from "react-router-dom"; // Importing useNavigate hook for navigation
-import { postData } from "../reuseable/fetchData.jsx"; // Importing postData function for making API requests
-import "../reuseable/styles/reusableFormComponents.css"; // Importing styles
-import "../reuseable/styles/reusableGlobal.css"; // Importing global styles
-import { useContext, useState } from "react"; // Importing useContext and useState hooks from React
-import { UserContext } from "../context/userContext.jsx"; // Importing UserContext for user state management
+import { useNavigate } from "react-router-dom";
+import { postData } from "../reuseable/fetchData.jsx";
+import "../reuseable/styles/reusableFormComponents.css";
+import "../reuseable/styles/reusableGlobal.css";
+import { useContext, useState } from "react";
+import { UserContext } from "../context/userContext.jsx";
 
 const UserLogin = () => {
-  // Extracting setIsLoggedIn and setUserData functions from UserContext
   const { setIsLoggedIn, setUserData } = useContext(UserContext);
-  const navigate = useNavigate(); // Initializing navigate function for programmatic navigation
+  const navigate = useNavigate();
 
-  // Defining state variables for email, password, and error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // Async function to handle form submission
   const login = async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault();
 
-    const body = { email, password }; // Constructing the body object from state
+    const body = { email, password };
 
     try {
-      const data = await postData("login", body); // Making API request to login endpoint
-      console.log({ data }); // Logging the response for debugging
+      const data = await postData("login", body);
+      console.log('Login successful:', data);
 
-      setUserData(data.user); // Setting user data in context
-      setIsLoggedIn(true); // Setting the user as logged in
-      navigate("/dashboard"); // Navigating to the dashboard on successful login
+      setUserData(data.user);
+      setIsLoggedIn(true);
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Login failed:', error); // Logging the error for debugging
-      setError("Invalid email or password"); // Setting the error message
+      console.error('Login failed:', error.message);
+      setError("Invalid email or password");
     }
   };
 
@@ -68,7 +65,7 @@ const UserLogin = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
-                  required // Ensuring email field is required
+                  required
                 />
               </div>
               <div className="mb-6">
@@ -76,7 +73,7 @@ const UserLogin = () => {
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                 >
-                  Passwort:
+                  Password:
                 </label>
                 <input
                   type="password"
@@ -85,18 +82,18 @@ const UserLogin = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
-                  required // Ensuring password field is required
+                  required
                 />
               </div>
               <button type="submit" className="reusableFormBtn">
-                Einloggen
+                Login
               </button>
               <div className="mt-4 text-center">
                 <a
                   href="/forgot-password"
                   className="text-sm text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  Passwort vergessen?
+                  Forgot Password?
                 </a>
               </div>
               <div className="mt-2 text-center">
@@ -104,7 +101,7 @@ const UserLogin = () => {
                   href="/register"
                   className="text-sm text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  Noch kein Konto? Registrieren
+                  Don't have an account? Register
                 </a>
               </div>
             </div>
