@@ -15,7 +15,10 @@ const GroupForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    formData.image = uploadImg;
+    setFormData(prevData => ({
+      ...prevData,
+      image: uploadImg,
+    }));
   }, [uploadImg]);
 
   const [formData, setFormData] = useState({
@@ -33,18 +36,16 @@ const GroupForm = () => {
   const handleChange = (e) => {
     setErrorMessage("");
     const { name, value, type, checked, files } = e.target;
-    let newValue =
-      type === "checkbox" ? checked : type === "file" ? files[0] : value;
+    const newValue = type === "checkbox" ? checked : type === "file" ? files[0] : value;
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
-      [name]: newValue, // Keine Notwendigkeit, den Wert in ein Array zu verpacken
+      [name]: newValue,
     }));
   };
 
   const handleTogglePrivate = () => {
-    console.log("Checkbox löst aus");
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       privateGroup: !prevData.privateGroup,
     }));
@@ -56,7 +57,6 @@ const GroupForm = () => {
 
   const handleImageUpload = (e) => {
     const image = e.target.files[0];
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setUploadImg(reader.result);
@@ -69,7 +69,8 @@ const GroupForm = () => {
    ******************************************************/
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FormData GroupFom", formData);
+    console.log("FormData GroupForm", formData);
+
     try {
       const response = await fetch("http://localhost:5500/createGroup", {
         method: "POST",
@@ -81,18 +82,17 @@ const GroupForm = () => {
       });
 
       const data = await response.json();
-      console.log("response status:", typeof response.status);
+      console.log("response status:", response.status);
 
-      // Überprüfen, ob die Gruppe(Title) bereits existiert
       if (response.status === 409) {
-        console.log("IF LÖST AUS!");
         setErrorMessage("Gruppenname bereits vergeben.");
+        return;
       }
 
-      // User.groups und LocalStorage aktualisieren (frontend)
-      setUserData({ ...userData, groups: [...userData.groups, data] });
-      console.log(groupsData);
-      setGroupsData([...groupsData, data]);
+      // Ensure userData.groups is an array before updating
+      const updatedGroups = Array.isArray(userData.groups) ? [...userData.groups, data] : [data];
+      setUserData(prevData => ({ ...prevData, groups: updatedGroups }));
+      setGroupsData(prevData => [...prevData, data]);
 
       navigate("/groups");
     } catch (error) {
@@ -101,7 +101,7 @@ const GroupForm = () => {
   };
 
   return (
-    <section className="flex  justify-center items-center min-h-screen w-full">
+    <section className="flex justify-center items-center min-h-screen w-full">
       <div className="relative">
         <div className="reusableSquare absolute" style={{ "--i": 0 }}></div>
         <div className="reusableSquare absolute" style={{ "--i": 1 }}></div>
@@ -127,7 +127,7 @@ const GroupForm = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className="reusableInput mt-1 p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 />
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
               </div>
@@ -144,7 +144,7 @@ const GroupForm = () => {
                   value={formData.text}
                   onChange={handleChange}
                   rows="4"
-                  className="reusableTextarea "
+                  className="reusableTextarea"
                 ></textarea>
               </div>
               <CustomCheckbox
@@ -178,51 +178,33 @@ const GroupForm = () => {
                 <select
                   id="tags"
                   name="tags"
-                  value={formData.tags} // Stellt sicher, dass formData.tags als String behandelt wird
+                  value={formData.tags}
                   onChange={handleChange}
                   className="mt-1 block text-gray-800 w-full border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="" disabled>
                     Wähle eine Kategorie aus...
                   </option>
-                  <option value="Kennlern/Stammtisch">
-                    Kennlern/Stammtisch
-                  </option>
+                  <option value="Kennlern/Stammtisch">Kennlern/Stammtisch</option>
                   <option value="Bildung/Erfahrung">Bildung/Erfahrung</option>
-                  <option value="Kunst, Kultur & Musik">
-                    Kunst, Kultur & Musik
-                  </option>
-                  <option value="Märkte & Flohmärkte">
-                    Märkte & Flohmärkte
-                  </option>
-                  <option value="Computer, Internet & Technik">
-                    Computer, Internet & Technik
-                  </option>
+                  <option value="Kunst, Kultur & Musik">Kunst, Kultur & Musik</option>
+                  <option value="Märkte & Flohmärkte">Märkte & Flohmärkte</option>
+                  <option value="Computer, Internet & Technik">Computer, Internet & Technik</option>
                   <option value="Familien & Kinder">Familien & Kinder</option>
                   <option value="Essen & Trinken">Essen & Trinken</option>
                   <option value="Feste & Feiern">Feste & Feiern</option>
                   <option value="Lokales Engagement">Lokales Engagement</option>
-                  <option value="Gestalten & Heimwerken">
-                    Gestalten & Heimwerken
-                  </option>
-                  <option value="Gesundheit / Wellness">
-                    Gesundheit / Wellness
-                  </option>
+                  <option value="Gestalten & Heimwerken">Gestalten & Heimwerken</option>
+                  <option value="Gesundheit / Wellness">Gesundheit / Wellness</option>
                   <option value="Sport & Bewegung">Sport & Bewegung</option>
-                  <option value="Umwelt & Nachhaltigkeit">
-                    Umwelt & Nachhaltigkeit
-                  </option>
-                  <option value="Teilen, Tauschen, Reparieren">
-                    Teilen, Tauschen, Reparieren
-                  </option>
-                  <option value="Viertel verschönern">
-                    Viertel verschönern
-                  </option>
+                  <option value="Umwelt & Nachhaltigkeit">Umwelt & Nachhaltigkeit</option>
+                  <option value="Teilen, Tauschen, Reparieren">Teilen, Tauschen, Reparieren</option>
+                  <option value="Viertel verschönern">Viertel verschönern</option>
                   <option value="Ausflüge">Ausflüge</option>
                   <option value="Sonstiges">Sonstiges</option>
                 </select>
               </div>
-              <button type="submit" className="reusableFormBtn ">
+              <button type="submit" className="reusableFormBtn">
                 Neue Gruppe erstellen
               </button>
             </div>
