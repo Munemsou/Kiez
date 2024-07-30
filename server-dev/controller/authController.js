@@ -3,7 +3,7 @@
  *    für login
  ******************************************************/
 import bcrypt from "bcrypt";
-import UserModel from "../models/userSchema.js";
+import UserModell from "../models/userSchema.js";
 import jwt from "jsonwebtoken";
 
 export const authenticateUser = async (req, res, next) => {
@@ -17,7 +17,7 @@ export const authenticateUser = async (req, res, next) => {
     }
 
     // 3. Find user by email
-    const user = await UserModel.findOne({ email });
+    const user = await UserModell.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
