@@ -1,10 +1,13 @@
-  export const postData = async (path, data) => {
-    const baseUrl = import.meta.env.MODE === 'development'
-      ? import.meta.env.VITE_API_URL_LOCAL
-      : import.meta.env.VITE_API_URL_PROD;
+export const postData = async (path, data) => {
+  // Determine the base URL based on the environment
+  const baseUrl = import.meta.env.MODE === 'development'
+    ? import.meta.env.VITE_API_URL_LOCAL
+    : import.meta.env.VITE_API_URL_PROD;
 
-    console.log(`Making POST request to: ${baseUrl}/${path} with data:`, data);
+  console.log('Environment Variables:', import.meta.env);
+  console.log(`Making POST request to: ${baseUrl}/${path} with data:`, data);
 
+  try {
     const response = await fetch(`${baseUrl}/${path}`, {
       method: "POST",
       headers: {
@@ -20,19 +23,9 @@
     let responseData;
 
     if (contentType && contentType.includes('application/json')) {
-      try {
-        responseData = await response.json();
-      } catch (jsonError) {
-        console.error('Failed to parse JSON response:', jsonError);
-        throw new Error('Failed to parse response as JSON');
-      }
+      responseData = await response.json();
     } else {
-      try {
-        responseData = await response.text();
-      } catch (textError) {
-        console.error('Failed to read text response:', textError);
-        throw new Error('Failed to read response text');
-      }
+      responseData = await response.text();
     }
 
     if (!response.ok) {
@@ -42,4 +35,8 @@
 
     console.log('Parsed response data:', responseData);
     return responseData;
-  };
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw new Error('Failed to fetch data');
+  }
+};
