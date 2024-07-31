@@ -1,8 +1,8 @@
 export const postData = async (path, data) => {
   // Determine the base URL based on the environment
   const baseUrl = import.meta.env.MODE === 'development'
-    ? import.meta.env.VITE_API_URL_LOCAL
-    : import.meta.env.VITE_API_URL_PROD;
+  ? import.meta.env.VITE_API_URL_PROD
+  : import.meta.env.VITE_API_URL_LOCAL;
 
   console.log('Environment Variables:', import.meta.env);
   console.log(`Making POST request to: ${baseUrl}/${path} with data:`, data);
