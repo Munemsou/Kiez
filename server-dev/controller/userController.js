@@ -1,3 +1,4 @@
+import validator from 'validator';
 import UserModell from "../models/userSchema.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "./jwtController.js";
@@ -112,22 +113,70 @@ export const logoutController = async (req, res) => {
 //! Id muss frontendseitig mitgeschickt werden
 //! so kann nutzer sowie admin den controller verwenden
 
+
 export const editUser = async (req, res, next) => {
-  const { street, number, zip, ...rest } = req.body;
-  const structuredObj = { ...rest };
+  const { street, number, zip, image, email, firstName, lastName, ...rest } = req.body;
 
-  if (street) structuredObj["address.0.street"] = street;
-  if (number) structuredObj["address.0.number"] = number;
-  if (zip) structuredObj["address.0.zip"] = zip;
+  // Initialize an empty object for updates
+  const structuredObj = {};
 
-  if (street === null) structuredObj["address.0.street"] = "";
-  if (number === null) structuredObj["address.0.number"] = "";
-  if (zip === null) structuredObj["address.0.zip"] = "";
+  // Validate and handle address fields
+  if (street !== undefined) {
+    structuredObj['address.0.street'] = street === null ? "" : street;
+  }
+  if (number !== undefined) {
+    structuredObj['address.0.number'] = number === null ? "" : number;
+  }
+  if (zip !== undefined) {
+    structuredObj['address.0.zip'] = zip === null ? "" : zip;
+  }
+
+  // Validate and handle image field
+  if (image !== undefined) {
+    structuredObj['image'] = image === null ? "" : (typeof image === 'object' ? "" : image);
+  }
+
+  // Validate and handle firstName field
+  if (firstName !== undefined) {
+    if (typeof firstName !== 'string' || firstName.length > 100) {
+      return res.status(400).send({ message: "Invalid firstName format" });
+    }
+    structuredObj['firstName'] = firstName;
+  }
+
+  // Validate and handle lastName field
+  if (lastName !== undefined) {
+    if (typeof lastName !== 'string' || lastName.length > 100) {
+      return res.status(400).send({ message: "Invalid lastName format" });
+    }
+    structuredObj['lastName'] = lastName;
+  }
+
+  // Validate and handle email field
+  if (email !== undefined) {
+    if (email === '') {
+      return res.status(400).send({ message: "Email cannot be empty" });
+    }
+    if (!validator.isEmail(email)) {
+      return res.status(400).send({ message: "Invalid email format" });
+    }
+    try {
+      // Check for duplicate email
+      const existingUser = await UserModell.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== req.params.id) {
+        return res.status(400).send({ message: "Email already in use" });
+      }
+      structuredObj['email'] = email;
+    } catch (error) {
+      return res.status(500).send({ message: "Error checking email uniqueness" });
+    }
+  }
 
   try {
     const userId = req.params.id;
     const options = { new: true };
 
+    // Update user with the structured object
     const user = await UserModell.findByIdAndUpdate(userId, { $set: structuredObj }, options);
     if (!user) {
       return res.status(404).send({ message: "User not found" });
@@ -139,7 +188,6 @@ export const editUser = async (req, res, next) => {
     res.status(error.status || 500).send({ message: error.message });
   }
 };
-
 
 /******************************************************
  *    deleteUser
