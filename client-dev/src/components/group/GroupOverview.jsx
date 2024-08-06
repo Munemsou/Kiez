@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext.jsx";
-import GroupCard from "./GroupCard.jsx";
 import { GroupsContext } from "../context/groupsContext.jsx";
+import GroupCard from "./GroupCard.jsx";
 import Searchbar from "./Searchbar.jsx";
 import SearchBtnUnclick from "./SearchBtnUnclick.jsx";
 import GroupFilter from "./GroupFilter.jsx";
+import { Link } from "react-router-dom";
+import { getBaseUrl } from "../../utils/envUtils.js";
 import "../reuseable/styles/reusableGlobal.css";
 import "../reuseable/styles/reusableFormComponents.css";
-import { Link } from "react-router-dom";
 
 const GroupOverview = () => {
   const { userData } = useContext(UserContext);
@@ -17,23 +18,20 @@ const GroupOverview = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [dropDFilterIsOpen, setDropDFilterIsOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState("");
+  const baseUrl = getBaseUrl(); // Get the base URL from the utility function
 
-  console.log("Userdata Groups in overwiev:", userData.groups);
-
-  /******************************************************
-   *    Groupsfetch und daten in den Context laden
-   ******************************************************/
-  //^ am ende mal schauen ob der GruppenContext notwendig ist
+  
+  console.log("Userdata Groups in overview:", userData.groups);
 
   useEffect(() => {
     const fetchGroupsData = async () => {
       try {
-        const response = await fetch("http://localhost:5500/getAllGroups");
+        const response = await fetch(`${baseUrl}/getAllGroups`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log("data overview", data);
+        console.log("Data overview:", data);
         setGroupsData(data);
       } catch (error) {
         console.error("Error fetching group data:", error);
@@ -41,92 +39,68 @@ const GroupOverview = () => {
     };
 
     fetchGroupsData();
-  }, []);
-
-  /******************************************************
-   *    SuchFunktion
-   ******************************************************/
+  }, [setGroupsData]);
 
   useEffect(() => {
-    console.log(searchResults);
+    console.log("Search results:", searchResults);
   }, [searchResults]);
 
-  // Funktion zum Umschalten der Sichtbarkeit des Suchfelds
   const toggleSearchInput = () => {
     setSearchInputVisible(!searchInputVisible);
   };
 
-  // Funktion zum Ausführen der Suche
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:5500/getSearchGroups/${searchValue}`,
-        {
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseUrl}/getSearchGroups/${searchValue}`, {
+        credentials: "include",
+      });
 
-      const responseData = await response.json(); // in JSON umgewandeln
+      const responseData = await response.json();
 
-      //! Error Message durch Userverständliche MSG ersetzten
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
-      setSearchResults(responseData); // Suchergebnisse basierend auf den JSON-Daten setzten
-
-      console.log("SEARCH-FETCH (searchResults) ERGEBNIS: ", searchResults);
+      setSearchResults(responseData);
+      console.log("Search fetch results:", responseData);
     } catch (error) {
       console.error("Error searching groups:", error);
     }
-    // Sichtbarkeit des Suchfelds zurück setzen
+
     setSearchInputVisible(false);
     setSearchValue("");
   };
 
-  /******************************************************
-   *    FilterFunktion
-   ******************************************************/
   const toggleDropdown = () => {
     setDropDFilterIsOpen(!dropDFilterIsOpen);
   };
 
-  // Handler-Funktion für die Auswahl im Dropdown-Menü
   const handleFilterChange = (event) => {
-    console.log("Filter Log", event.target.value);
+    console.log("Filter Log:", event.target.value);
     setSelectedTag(event.target.value);
   };
 
   useEffect(() => {
-    console.log("Aktualisierter selectedTag: ", selectedTag);
+    console.log("Updated selectedTag:", selectedTag);
   }, [selectedTag]);
 
-  // Filtere gruppenliste nach Tag
   let filteredGroups = groupsData;
   if (selectedTag) {
-    filteredGroups = groupsData.filter((group) => group.tags === selectedTag);
-    console.log(filteredGroups);
+    filteredGroups = groupsData.filter((group) => group.tags.includes(selectedTag));
+    console.log("Filtered groups:", filteredGroups);
   }
 
   return (
     <section className="relative min-h-screen overflow-hidden flex justify-center items-center">
-      {/* Fest positionierter Hintergrund */}
-      {/* <div className="absolute inset-0">
-        <div className="fixed reusableGlobalBackground "></div>
-        <div className="fixed reusableGlobalBackground "></div>
-        <div className=" fixed reusableGlobalBackground "></div>
-      </div> */}
-
-      {/* Scrollbarer Inhalts-Container */}
-      <div className="w-full h-full overflow-auto ">
+      <div className="w-full h-full overflow-auto">
         <div className="reusableContainer mx-auto flex flex-col items-center">
           <div className="min-w-420px">
             <div className="reusableHeaderBar bg-stone-400 mt-2">
               <header className="p-5">
                 <h2 className="text-3xl">Gruppen</h2>
               </header>
-              <div className=" flex justify-between items-center p-2">
+              <div className="flex justify-between items-center p-2">
                 <ul className="border-black flex justify-between w-80">
                   {searchInputVisible ? (
                     <Searchbar
@@ -140,10 +114,7 @@ const GroupOverview = () => {
                   )}
                   {!searchInputVisible && (
                     <>
-                      <li
-                        className="flex items-center"
-                        onClick={toggleDropdown}
-                      >
+                      <li className="flex items-center" onClick={toggleDropdown}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -210,8 +181,6 @@ const GroupOverview = () => {
 
             {/* RENDERING DER CARDS */}
             {searchResults.length > 0 ? (
-              // Suchergebnisse vorhanden
-
               <>
                 <span>gefundene Suchergebnisse</span>
                 <button
@@ -227,19 +196,12 @@ const GroupOverview = () => {
                 </ul>
               </>
             ) : selectedTag ? (
-              // Filter ist aktiv, zeige gefilterte Gruppen
-              <>
-                {/* Gefilterte Gruppen basierend auf selectedTag anzeigen */}
-                <ul className="h-auto">
-                  {groupsData
-                    .filter((group) => group.tags.includes(selectedTag))
-                    .map((group, index) => (
-                      <GroupCard key={index} group={group} />
-                    ))}
-                </ul>
-              </>
+              <ul className="h-auto">
+                {filteredGroups.map((group, index) => (
+                  <GroupCard key={index} group={group} />
+                ))}
+              </ul>
             ) : (
-              // Standardansicht ohne Filter und Suche
               <>
                 <h3 className="reusableH3 text-xl font-semibold mb-4 pb-2 border-b-2 w-full px-4 py-2 mt-5">
                   Deine Gruppen

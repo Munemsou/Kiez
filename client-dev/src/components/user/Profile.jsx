@@ -1,178 +1,160 @@
-import { useContext, useState } from "react";
-import {
-  inputStyle,
-  labelStyle,
-  trashButton,
-} from "../reuseable/styles/reuseableComponents.jsx";
+import React, { useContext, useState, useEffect } from 'react';
+import { inputStyle, labelStyle, trashButton } from "../reuseable/styles/reuseableComponents.jsx";
 import { UserContext } from "../context/userContext.jsx";
+import { getBaseUrl } from '../../utils/envUtils.js';
+
+// Function to dynamically load Cloudinary script
+const loadCloudinaryScript = () => {
+  return new Promise((resolve, reject) => {
+    if (window.cloudinary) {
+      resolve(window.cloudinary);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
+    script.onload = () => resolve(window.cloudinary);
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+};
 
 const UpdateProfile = () => {
   const { userData, setUserData } = useContext(UserContext);
-  const [uploadImg, setUploadImg] = useState(null);
-  // image Upload
-  function handleImageUpload(event) {
-    const file = event.target.files[0]; // Get the selected file
-    const reader = new FileReader(); // Create a file reader object
-    // Define a callback function to be executed when file reading is complete
-    reader.onloadend = () => {
-      // Convert the image file to a base64 string
-      const imageData = reader.result;
-      // Update the state with the base64 string representing the uploaded image
-      setUploadImg(imageData);
-    };
-    if (file) {
-      // Start reading the file as a data URL
-      reader.readAsDataURL(file);
-    }
-  }
-/*   function handleButtonClick() {
-    // Trigger the file input click event programmatically
-    document.getElementById("image").click();
-  } */
-  function handleDeleteImage() {
-    // Reset the uploaded image state
-    setUploadImg(null);
-  }
-  // Trash symbol
-  const trash = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="w-6 h-6"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-      />
-    </svg>
-  );
-  // Function to handle delete form field
-  const onDelete = async (fieldName) => {
-    console.log("fieldName:", fieldName);
-    try {
-      const res = await fetch(`http://localhost:5500/edit/${userData._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          [fieldName]: null,
-        }),
-      });
-      const data = await res.json();
-      setUserData(data.user);
-      alert("Removed successfully!");
-    } catch (error) {
-      console.log(error);
-    }
-    // window.location.reload();
-    return;
-
-    setUserData((prevUserData) => {
-      const updatedUserData = { ...prevUserData };
-      // Delete the targeted field
-      delete updatedUserData[fieldName];
-      return updatedUserData;
-    });
-  };
-
-  // Function to handle form submission
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const formDataProps = Object.fromEntries(formData);
-    // console.log(formDataProps);
-    const updatedData = {};
-    for (let nameAttr in formDataProps) {
-      // console.log(nameAttr);
-      if (formDataProps[nameAttr] !== "") {
-        updatedData[nameAttr] = formDataProps[nameAttr];
-      }
-    }
-    console.log("updatedData:", updatedData);
-    try {
-      const res = await fetch(`http://localhost:5500/edit/${userData._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          ...updatedData,
-        }),
-      });
-      const data = await res.json();
-      setUserData(data.user);
-      alert("Profile updated successfully!");
-      window.location.reload();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  
-/* // Function to handle form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const updatedData = {};
-
-  // Iterate over each form field
-  formData.forEach((value, key) => {
-    // Exclude email and image fields
-    if (key !== 'email' && key !== 'image') {
-      updatedData[key] = value;
-    }
+  const [uploadImg, setUploadImg] = useState(userData.image || null); // Use the user's current image
+  const [cloudinaryLoaded, setCloudinaryLoaded] = useState(false);
+  const [formData, setFormData] = useState({
+    aboutMe: userData.aboutMe || "",
+    email: userData.email || "",
+    firstName: userData.firstName || "",
+    lastName: userData.lastName || "",
+    street: userData.address[0]?.street || "",
+    number: userData.address[0]?.number || "",
+    zip: userData.address[0]?.zip || ""
   });
 
-  console.log("updatedData:", updatedData);
+  const baseUrl = getBaseUrl();
 
-  try {
-    const res = await fetch(`http://localhost:5500/edit/${userData._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        ...updatedData,
-      }),
-    });
-    const data = await res.json();
-    setUserData(data.user);
-    alert("Profile updated successfully!");
-    window.location.reload();
-  } catch (error) {
-    console.log(error);
-  }
-}; */
+  useEffect(() => {
+    loadCloudinaryScript()
+      .then(cloudinary => {
+        if (cloudinary) {
+          setCloudinaryLoaded(true);
+        } else {
+          console.error('Failed to load Cloudinary script');
+        }
+      })
+      .catch(err => console.error('Error loading Cloudinary script', err));
+  }, []);
 
+  const handleImageUpload = (result) => {
+    if (result && result.event === 'success') {
+      setUploadImg(result.info.secure_url);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setUploadImg(null); // Set image URL to null
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Prepare updatedData based on current formData and state
+    const updatedData = {
+      ...formData,
+      image: uploadImg || userData.image // Include the uploaded image URL
+    };
+
+    // Ensure no empty values for required fields
+    if (!updatedData.email || updatedData.email.trim() === '') {
+      alert('Email cannot be empty.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${baseUrl}/edit/${userData._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(updatedData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUserData(data.user);
+        alert("Profile updated successfully!");
+      } else {
+        alert(data.message || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleClick = () => {
+    if (window.cloudinary && cloudinaryLoaded) {
+      window.cloudinary.openUploadWidget(
+        {
+          cloudName: 'detcmp1w9', // Replace with your Cloudinary cloud name
+          uploadPreset: 'mq5nxvzz', // Replace with your Cloudinary upload preset
+        },
+        handleImageUpload
+      );
+    } else {
+      console.error('Cloudinary is not loaded or available');
+    }
+  };
+
+  const onDelete = async (fieldName) => {
+    try {
+      const res = await fetch(`${baseUrl}/edit/${userData._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ [fieldName]: null }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUserData(data.user);
+        alert("Removed successfully!");
+      } else {
+        alert(data.message || "Failed to remove field");
+      }
+    } catch (error) {
+      console.error('Error removing field:', error);
+    }
+  };
 
   return (
-    <section className="flex justify-center  min-h-screen w-full">
+    <section className="flex justify-center min-h-screen w-full">
       <div className="relative">
         <div className="reusableSquare absolute" style={{ "--i": 0 }}></div>
         <div className="reusableSquare absolute" style={{ "--i": 1 }}></div>
         <div className="reusableSquare absolute" style={{ "--i": 2 }}></div>
-        {/*  <div className="reusableSquare absolute" style={{ "--i": 3 }}></div> */}
-        {/* <div className="reusableSquare absolute" style={{ "--i": 4 }}></div> */}
-        <div className="reusableContainer  mt-12 shadow-md">
-          <form className="reusableForm" onSubmit={(e) => handleSubmit(e)}>
-            <div className="profile-image-upload ">
+        <div className="reusableContainer mt-12 shadow-md">
+          <form className="reusableForm" onSubmit={handleSubmit}>
+            <div className="profile-image-upload">
               {uploadImg ? (
-                <div className="image-preview flex justify-center ">
+                <div className="image-preview flex justify-center">
                   <img
                     src={uploadImg}
-                    alt="Profile "
+                    alt="Profile"
                     className="w-[200px] h-[200px] object-cover rounded-full mx-auto"
                   />
                   <button
+                    type="button"
                     onClick={handleDeleteImage}
                     className="delete-image-button"
                   >
@@ -180,52 +162,35 @@ const handleSubmit = async (e) => {
                   </button>
                 </div>
               ) : (
-                <div className="image-placeholder ">
+                <div className="image-placeholder flex justify-center">
                   <img
-                    src="../avatar-icon.jpg"
+                    src="../avatar-icon.jpg" // Placeholder image
                     alt="Placeholder"
                     className="w-[200px] h-[200px] object-cover rounded-full mx-auto"
                   />
                 </div>
               )}
-              <label
-                htmlFor="image"
-                className="file-input-label block text-center mt-4"
+              <button
+                type="button"
+                onClick={handleClick}
+                className="reusableFormBtn mt-2"
+                disabled={!cloudinaryLoaded}
               >
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  onChange={handleImageUpload}
-                  className="file-input hidden"
-                />
-                <span className="reusableFormBtn mt-2">Bild wählen</span>
-              </label>
+                Choose Image
+              </button>
             </div>
-            <h3 className="reusableH3 m-2 ">Hi {userData.firstName},</h3>
+            <h3 className="reusableH3 m-2">Hi {userData.firstName},</h3>
             <textarea
               name="aboutMe"
               id="aboutMe"
               cols="30"
               rows="5"
-              placeholder="Hier kannst du dich mit deinen eigenen Worten vorstellen."
-              defaultValue={userData.aboutMe || ""}
+              placeholder="Here you can introduce yourself."
+              value={formData.aboutMe}
+              onChange={handleChange}
               className="about-me-textarea"
             ></textarea>
-            {/* <div>
-            <label htmlFor="groups">Groups:</label>
-            <select
-              multiple
-              value={userData.groups}
-              // onChange={handleSelectChange}
-              id="groups"
-              name="groups"
-            >
-              
-              {userData.groups}
-            </select>
-          </div> */}
-          <div className="relative">
+            <div className="relative">
               <label htmlFor="email" className={labelStyle}>
                 Email:
               </label>
@@ -233,49 +198,51 @@ const handleSubmit = async (e) => {
                 type="email"
                 id="email"
                 name="email"
-                placeholder={userData.email}
+                value={formData.email}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
             <div className="relative">
               <label htmlFor="firstName" className={labelStyle}>
-                firstName:
+                First Name:
                 <button
                   type="button"
                   className={trashButton}
                   onClick={() => onDelete("firstName")}
                 >
-                  {trash}
+                  🗑️
                 </button>
               </label>
               <input
                 type="text"
                 id="firstName"
                 name="firstName"
-                placeholder={userData.firstName}
+                value={formData.firstName}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
             <div className="relative">
               <label htmlFor="lastName" className={labelStyle}>
-                lastName:
+                Last Name:
                 <button
                   type="button"
                   className={trashButton}
                   onClick={() => onDelete("lastName")}
                 >
-                  {trash}
+                  🗑️
                 </button>
               </label>
               <input
                 type="text"
                 id="lastName"
                 name="lastName"
-                placeholder={userData.lastName}
+                value={formData.lastName}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
-            
             <div className="relative">
               <label htmlFor="street" className={labelStyle}>
                 Street:
@@ -284,14 +251,15 @@ const handleSubmit = async (e) => {
                   className={trashButton}
                   onClick={() => onDelete("street")}
                 >
-                  {trash}
+                  🗑️
                 </button>
               </label>
               <input
                 type="text"
                 id="street"
                 name="street"
-                placeholder={userData.address[0].street}
+                value={formData.street}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
@@ -303,14 +271,15 @@ const handleSubmit = async (e) => {
                   className={trashButton}
                   onClick={() => onDelete("number")}
                 >
-                  {trash}
+                  🗑️
                 </button>
               </label>
               <input
                 type="text"
                 id="number"
                 name="number"
-                placeholder={userData.address[0].number}
+                value={formData.number}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
@@ -322,18 +291,18 @@ const handleSubmit = async (e) => {
                   className={trashButton}
                   onClick={() => onDelete("zip")}
                 >
-                  {trash}
+                  🗑️
                 </button>
               </label>
               <input
                 type="text"
                 id="zip"
                 name="zip"
-                placeholder={userData.address[0].zip}
+                value={formData.zip}
+                onChange={handleChange}
                 className={inputStyle}
               />
             </div>
-            {/* Add other form fields as needed */}
             <button type="submit" className="reusableFormBtn mt-2">
               Update Profile
             </button>

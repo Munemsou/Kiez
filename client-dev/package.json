@@ -12,10 +12,12 @@
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
+    "cloudinary-react": "^1.8.1",
     "dotenv": "^16.4.5",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
+    "react-cloudinary-upload-widget": "^2.0.0",
     "react-currency-input-field": "^3.8.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",

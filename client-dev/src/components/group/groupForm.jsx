@@ -2,25 +2,16 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { GroupsContext } from "../context/groupsContext.jsx";
+import { getBaseUrl } from "../../utils/envUtils.js";
 import "../reuseable/styles/reusableFormComponents.css";
 import "../reuseable/styles/reusableGlobal.css";
 import { CustomCheckbox } from "../reuseable/CustomCheckbox.jsx";
 
 const GroupForm = () => {
   const { userData, setUserData } = useContext(UserContext);
+  const { groupsData, setGroupsData } = useContext(GroupsContext);
   const [errorMessage, setErrorMessage] = useState("");
   const [uploadImg, setUploadImg] = useState("");
-  const { groupsData, setGroupsData } = useContext(GroupsContext);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setFormData(prevData => ({
-      ...prevData,
-      image: uploadImg,
-    }));
-  }, [uploadImg]);
-
   const [formData, setFormData] = useState({
     title: "",
     text: "",
@@ -29,10 +20,17 @@ const GroupForm = () => {
     privateGroup: false,
   });
 
-  /******************************************************
-   *    handleChange
-   ******************************************************/
+  const navigate = useNavigate();
+  const baseUrl = getBaseUrl(); // Get the base URL from the utility function
 
+  useEffect(() => {
+    setFormData(prevData => ({
+      ...prevData,
+      image: uploadImg,
+    }));
+  }, [uploadImg]);
+
+  // Handle form input changes
   const handleChange = (e) => {
     setErrorMessage("");
     const { name, value, type, checked, files } = e.target;
@@ -44,6 +42,7 @@ const GroupForm = () => {
     }));
   };
 
+  // Toggle private group state
   const handleTogglePrivate = () => {
     setFormData(prevData => ({
       ...prevData,
@@ -51,10 +50,7 @@ const GroupForm = () => {
     }));
   };
 
-  /******************************************************
-   *     Bild-Upload
-   ******************************************************/
-
+  // Handle image upload
   const handleImageUpload = (e) => {
     const image = e.target.files[0];
     const reader = new FileReader();
@@ -64,15 +60,13 @@ const GroupForm = () => {
     reader.readAsDataURL(image);
   };
 
-  /******************************************************
-   *    handleSubmit
-   ******************************************************/
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("FormData GroupForm", formData);
 
     try {
-      const response = await fetch("http://localhost:5500/createGroup", {
+      const response = await fetch(`${baseUrl}/createGroup`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -81,22 +75,31 @@ const GroupForm = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-      console.log("response status:", response.status);
+      const contentType = response.headers.get("Content-Type");
 
-      if (response.status === 409) {
-        setErrorMessage("Gruppenname bereits vergeben.");
-        return;
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        console.log("response status:", response.status);
+
+        if (response.status === 409) {
+          setErrorMessage("Gruppenname bereits vergeben.");
+          return;
+        }
+
+        // Update user data and groups context
+        const updatedGroups = Array.isArray(userData.groups) ? [...userData.groups, data] : [data];
+        setUserData(prevData => ({ ...prevData, groups: updatedGroups }));
+        setGroupsData(prevData => [...prevData, data]);
+
+        navigate("/groups");  
+      } else {
+        const text = await response.text(); // Read response as text
+        console.error("Unexpected response format:", text);
+        setErrorMessage("Es gab einen Fehler beim Erstellen der Gruppe.");
       }
-
-      // Ensure userData.groups is an array before updating
-      const updatedGroups = Array.isArray(userData.groups) ? [...userData.groups, data] : [data];
-      setUserData(prevData => ({ ...prevData, groups: updatedGroups }));
-      setGroupsData(prevData => [...prevData, data]);
-
-      navigate("/groups");
     } catch (error) {
       console.error("Error sending data to server:", error);
+      setErrorMessage("Es gab einen Fehler beim Erstellen der Gruppe.");
     }
   };
 

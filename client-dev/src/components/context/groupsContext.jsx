@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { getBaseUrl } from "../../utils/envUtils.js"; // Import getBaseUrl function
 
 export const GroupsContext = createContext();
 
@@ -9,8 +10,10 @@ export const GroupsProvider = ({ children }) => {
   useEffect(() => {
     const fetchGroupsData = async () => {
       setIsLoading(true);
+      const baseUrl = getBaseUrl(); // Get the base URL from the utility function
+
       try {
-        const response = await fetch("http://localhost:5500/groups");
+        const response = await fetch(`${baseUrl}/groups`);
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setGroupsData(data);
