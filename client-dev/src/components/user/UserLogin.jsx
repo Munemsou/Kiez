@@ -4,6 +4,7 @@ import "../reuseable/styles/reusableFormComponents.css";
 import "../reuseable/styles/reusableGlobal.css";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext.jsx";
+import { getBaseUrl } from '../../utils/envUtils.js'; // Import the baseUrl function
 
 const UserLogin = () => {
   const { setIsLoggedIn, setUserData } = useContext(UserContext);
@@ -13,13 +14,16 @@ const UserLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const baseUrl = getBaseUrl(); // Get the base URL
+
   const login = async (event) => {
     event.preventDefault();
 
     const body = { email, password };
 
     try {
-      const data = await postData("login", body);
+      // Pass baseUrl to the postData function
+      const data = await postData(`${baseUrl}/login`, body);
       console.log('Login successful:', data);
 
       setUserData(data.user);
