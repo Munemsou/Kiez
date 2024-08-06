@@ -23,7 +23,7 @@ const UserLogin = () => {
 
     try {
       // Pass baseUrl to the postData function
-      const data = await postData(`${baseUrl}/login`, body);
+      const data = await postData(`https://kiez-server.onrender.com/login`, body);
       console.log('Login successful:', data);
 
       setUserData(data.user);
