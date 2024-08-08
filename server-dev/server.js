@@ -33,8 +33,8 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
       "https://kiez.onrender.com",
+      "http://localhost:5173",
       // Add other allowed origins if necessary
     ],
     credentials: true,
