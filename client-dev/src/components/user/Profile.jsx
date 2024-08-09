@@ -1,28 +1,12 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { inputStyle, labelStyle, trashButton } from "../reuseable/styles/reuseableComponents.jsx";
 import { UserContext } from "../context/userContext.jsx";
 import { getBaseUrl } from '../../utils/envUtils.js';
-
-// Function to dynamically load Cloudinary script
-const loadCloudinaryScript = () => {
-  return new Promise((resolve, reject) => {
-    if (window.cloudinary) {
-      resolve(window.cloudinary);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
-    script.onload = () => resolve(window.cloudinary);
-    script.onerror = reject;
-    document.body.appendChild(script);
-  });
-};
+import useCloudinary from '../reuseable/useCloudinary.js';
 
 const UpdateProfile = () => {
   const { userData, setUserData } = useContext(UserContext);
-  const [uploadImg, setUploadImg] = useState(userData.image || null); // Use the user's current image
-  const [cloudinaryLoaded, setCloudinaryLoaded] = useState(false);
+  const [uploadImg, setUploadImg] = useState(userData.image || null);
   const [formData, setFormData] = useState({
     aboutMe: userData.aboutMe || "",
     email: userData.email || "",
@@ -33,28 +17,24 @@ const UpdateProfile = () => {
     zip: userData.address[0]?.zip || ""
   });
 
+  const { cloudinary, loading, error } = useCloudinary();
   const baseUrl = getBaseUrl();
 
-  useEffect(() => {
-    loadCloudinaryScript()
-      .then(cloudinary => {
-        if (cloudinary) {
-          setCloudinaryLoaded(true);
-        } else {
-          console.error('Failed to load Cloudinary script');
-        }
-      })
-      .catch(err => console.error('Error loading Cloudinary script', err));
-  }, []);
-
-  const handleImageUpload = (result) => {
+  const handleImageUpload = (error, result) => {
+    if (error) {
+      console.error('Upload error:', error);
+      return;
+    }
+    // console.log('Image upload result:', result); // Debugging line
     if (result && result.event === 'success') {
       setUploadImg(result.info.secure_url);
+    } else {
+      console.error('Upload result is not successful:', result);
     }
   };
 
   const handleDeleteImage = () => {
-    setUploadImg(null); // Set image URL to null
+    setUploadImg(null);
   };
 
   const handleChange = (e) => {
@@ -68,13 +48,11 @@ const UpdateProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare updatedData based on current formData and state
     const updatedData = {
       ...formData,
-      image: uploadImg || userData.image // Include the uploaded image URL
+      image: uploadImg || userData.image
     };
 
-    // Ensure no empty values for required fields
     if (!updatedData.email || updatedData.email.trim() === '') {
       alert('Email cannot be empty.');
       return;
@@ -102,8 +80,8 @@ const UpdateProfile = () => {
   };
 
   const handleClick = () => {
-    if (window.cloudinary && cloudinaryLoaded) {
-      window.cloudinary.openUploadWidget(
+    if (cloudinary) {
+      cloudinary.openUploadWidget(
         {
           cloudName: 'detcmp1w9', // Replace with your Cloudinary cloud name
           uploadPreset: 'mq5nxvzz', // Replace with your Cloudinary upload preset
@@ -136,6 +114,9 @@ const UpdateProfile = () => {
       console.error('Error removing field:', error);
     }
   };
+
+  if (loading) return <p>Loading Cloudinary...</p>;
+  if (error) return <p>Error loading Cloudinary: {error.message}</p>;
 
   return (
     <section className="flex justify-center min-h-screen w-full">
@@ -174,7 +155,7 @@ const UpdateProfile = () => {
                 type="button"
                 onClick={handleClick}
                 className="reusableFormBtn mt-2"
-                disabled={!cloudinaryLoaded}
+                disabled={!cloudinary}
               >
                 Choose Image
               </button>
@@ -285,7 +266,7 @@ const UpdateProfile = () => {
             </div>
             <div className="relative">
               <label htmlFor="zip" className={labelStyle}>
-                ZIP:
+                Zip:
                 <button
                   type="button"
                   className={trashButton}
@@ -304,7 +285,7 @@ const UpdateProfile = () => {
               />
             </div>
             <button type="submit" className="reusableFormBtn mt-2">
-              Update Profile
+              Save Changes
             </button>
           </form>
         </div>
