@@ -117,6 +117,8 @@ export const logoutController = async (req, res) => {
 export const editUser = async (req, res, next) => {
   const { street, number, zip, image, email, firstName, lastName, ...rest } = req.body;
 
+  // console.log('Received data for update:', req.body); // Log incoming data
+
   // Initialize an empty object for updates
   const structuredObj = {};
 
@@ -175,6 +177,8 @@ export const editUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const options = { new: true };
+
+    // console.log('Updating user with:', structuredObj); // Log what is being updated
 
     // Update user with the structured object
     const user = await UserModell.findByIdAndUpdate(userId, { $set: structuredObj }, options);
