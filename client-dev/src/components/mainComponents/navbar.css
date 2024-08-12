@@ -33,11 +33,11 @@
 .dropdown-menu {
   position: absolute;
   top: 60px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
+  right: 18px;
+  background-color: rgba(255, 255, 255, 0.479);
+  /* backdrop-filter: blur(10px); */
   border: 1px solid rgba(255, 255, 255, 0.3);
-  
+  border-radius: .375rem;
 
   display: flex;
   flex-direction: column;
@@ -48,7 +48,10 @@
 }
 
 /* Passt den dunklen Modus der Dropdown-Menüs an */
-.dark-mode .dropdown-menu {
-  background: rgba(0, 0, 0, 0.349);
+.dark-mode .dropdown-menu{
+  background: rgba(31, 41, 55, 1);
+  border: none;
+  border-radius: .375rem;
+  color: rgb(203, 213, 225);
 }
 

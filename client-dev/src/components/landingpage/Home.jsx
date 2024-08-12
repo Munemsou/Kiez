@@ -22,7 +22,7 @@ const Home = () => {
           <div className="container mt-64">
             <div className="form">
               <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">
-                Herzlich Willkommen bei Support Street!
+                Herzlich Willkommen bei Kiez!
               </h2>
               <p className="text-xl mb-6 text-center">
                 Bist du bereits Mitglied?{" "}

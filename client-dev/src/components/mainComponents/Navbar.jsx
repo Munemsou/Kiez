@@ -20,9 +20,9 @@ const Navbar = () => {
       } flex justify-between items-center px-4 py-2 fixed top-0 left-0 w-full z-50`}
     >
       <div className="logo-and-title flex items-center">
-        <Link className="logo-and-title flex items-center" to="./dashboard">
-          <img src={Logo} className="logo-placeholder mr-2" alt="logo" />
-          <span>Support Street</span>
+        <Link className="logo-and-title flex items-center" to="./">
+          <img src={Logo} className="logo-placeholder mr-0" alt="logo" />
+          {/* <span>Support Street </span> */}
         </Link>
       </div>
       <div className="nav-items flex items-center gap-4">
@@ -87,8 +87,11 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <NavLink to="/dashboard" onClick={toggleMenu}>
-                  Home
+                  Dashboard
                 </NavLink>
+                {/* <NavLink to="/home" onClick={toggleMenu}>
+                  Home
+                </NavLink> */}
                 <NavLink to="/groups" onClick={toggleMenu}>
                   Gruppen
                 </NavLink>

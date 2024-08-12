@@ -57,7 +57,7 @@ const Dashboard = () => {
         <div className="container mt-64">
           <div className="form">
             <h2 className="text-3xl font-bold mb-4  text-gray-800">
-              Herzlich Willkommen bei Support Street!
+              Herzlich Willkommen bei Kiez!
             </h2>
             <img src={Logo} alt="logo" />
           </div>
