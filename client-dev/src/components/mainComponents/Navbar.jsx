@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { UserContext } from "../context/userContext.jsx";
 import { DropDownProfile } from "./DropDownProfile";
 import "./navbar.css";
-import Logo from "../assets/SupportStreetLogo.png";
+import Logo from "../assets/Kiez_logo_Cir_tr.png";
 
 const Navbar = () => {
   const { darkMode, toggleDarkMode } = useTheme();

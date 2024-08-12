@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Carousel from "../landingpage/Carousel.jsx";
 import "./DashboardStyle.css";
-import Logo from "../assets/SupportStreetLogo.png";
+import Logo from "../assets/Kiez_logo_Cir_tr.png";
 
 const Dashboard = () => {
   return (
@@ -59,7 +59,7 @@ const Dashboard = () => {
             <h2 className="text-3xl font-bold mb-4  text-gray-800">
               Herzlich Willkommen bei Kiez!
             </h2>
-            <img src={Logo} alt="logo" />
+            <img src={Logo} alt="logo" className="img_logo" />
           </div>
         </div>
       </section>

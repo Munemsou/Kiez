@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./carousel.css";
+// import Carousel0 from "../assets/Carousel0.png";
 import Carousel1 from "../assets/Carousel1.jpg";
 import Carousel2 from "../assets/Carousel2.jpg";
 import Carousel3 from "../assets/Carousel3.jpg";
@@ -23,6 +24,7 @@ const Carousel = () => {
   };
 
   const images = [
+    // Carousel0,
     Carousel1,
     Carousel2,
     Carousel3,
