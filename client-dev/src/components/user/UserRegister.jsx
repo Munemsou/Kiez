@@ -1,7 +1,13 @@
-import "../reuseable/styles/reusableFormComponents.css";
-import "../reuseable/styles/reusableGlobal.css";
+import {
+  buttonStyle,
+  inputStyle,
+  labelStyle,
+} from "../reuseable/styles/reuseableComponents.jsx";
+import { getBaseUrl } from '../../utils/envUtils.js';
 
 const UserRegister = () => {
+  const baseUrl = getBaseUrl();
+
   const submitHandler = async (event) => {
     event.preventDefault();
     const el = event.target.elements;
@@ -12,7 +18,6 @@ const UserRegister = () => {
       email: el.email.value,
       password: el.password.value,
       confirmPassword: el.confirmPassword.value,
-
       address: [
         {
           zip: el.zip.value,
@@ -21,34 +26,43 @@ const UserRegister = () => {
         },
       ],
     };
+
     // Call getGeoCodeData with the address synchronously
     const geoCodeData = await getGeoCodeData(body.address);
 
+    console.log("GEO CODE DATA [0]: -> ", geoCodeData[0]);
+
     if (geoCodeData) {
-      body.geoCode = [geoCodeData[0], geoCodeData[1]];
-      // const body = {
-      //   firstName: el.firstName.value,
-      //   lastName: el.lastName.value,
-      //   email: el.email.value,
-      //   password: el.password.value,
-      //   confirmPassword: el.confirmPassword.value,
-      //   address: [body.address],
-      //   geoCode: [geoCodeData[0], geoCodeData[1]],
-      // };
+      const bodyWithGeo = {
+        firstName: el.firstName.value,
+        lastName: el.lastName.value,
+        email: el.email.value,
+        password: el.password.value,
+        confirmPassword: el.confirmPassword.value,
+        address: [body.address],
+        geoCode: [geoCodeData[0], geoCodeData[1]],
+      };
 
       // Send the registration data to the server
-      const response = await fetch("http://localhost:5500/register", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      try {
+        const response = await fetch(`${baseUrl}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyWithGeo),
+        });
 
-      // Process the response
-      const data = await response.json();
-      console.log({ data });
-      event.target.reset();
+        if (!response.ok) {
+          throw new Error('Registration failed');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        event.target.reset();
+      } catch (error) {
+        console.error('Registration error:', error);
+      }
     }
   };
 
@@ -64,8 +78,6 @@ const UserRegister = () => {
       if (data && data.length > 0) {
         const latitude = parseFloat(data[0].lat);
         const longitude = parseFloat(data[0].lon);
-        // console.log("latitude:", latitude, "longitude:", longitude );
-
         return [latitude, longitude];
       } else {
         console.error("No geocode data found.");
@@ -78,139 +90,83 @@ const UserRegister = () => {
   };
 
   return (
-    <section className="flex  justify-center items-center mt-32 w-full">
-      <div className="reusableGlobalBackground absolute"></div>
-      <div className="reusableGlobalBackground absolute"></div>
-      <div className="reusableGlobalBackground absolute"></div>
-      <div className="relative">
-        <div className="reusableSquare absolute" style={{ "--i": 0 }}></div>
-        <div className="reusableSquare absolute" style={{ "--i": 1 }}></div>
-        <div className="reusableSquare absolute" style={{ "--i": 2 }}></div>
-        <div className="reusableSquare absolute" style={{ "--i": 3 }}></div>
-        <div className="reusableSquare absolute" style={{ "--i": 4 }}></div>
-        <div className="reusableContainer reusableBorder mt-12 shadow-md">
-          <form className="reusableForm" onSubmit={submitHandler}>
-            <div>
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Vorname:
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  id="firstName"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Nachname:
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  id="lastName"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="street"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Straße:
-                </label>
-                <input
-                  type="text"
-                  name="street"
-                  id="street"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Haus-Nr:
-                </label>
-                <input
-                  type="text"
-                  name="number"
-                  id="number"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-
-              <div className="pt-3">
-                <label
-                  htmlFor="zip"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  PLZ:
-                </label>
-                <input
-                  type="text"
-                  name="zip"
-                  id="zip"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  E-Mail:
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Passwort:
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-3">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-800"
-                >
-                  Passwort bestätigen:
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  className="reusableInput mt-1  p-2 text-gray-800 block w-full border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-            </div>
-
-            <button className="reusableFormBtn ">Abschicken</button>
-          </form>
+    <form
+      className="h-fit flex flex-col justify-center gap-3 bg-white dark:bg-slate-800 rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl "
+      onSubmit={submitHandler}
+    >
+      <div className="p-2 bg-slate-500/15 shadow-lg rounded w-full gap-2">
+        <div>
+          <label htmlFor="firstName" className={labelStyle}>
+            Vorname:
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            id="firstName"
+            className={inputStyle}
+          />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="lastName" className={labelStyle}>
+            Nachname:
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            id="lastName"
+            className={inputStyle}
+          />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="street" className={labelStyle}>
+            Straße:
+          </label>
+          <input type="text" name="street" id="street" className={inputStyle} />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="number" className={labelStyle}>
+            Haus-Nr:
+          </label>
+          <input type="text" name="number" id="number" className={inputStyle} />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="zip" className={labelStyle}>
+            PLZ:
+          </label>
+          <input type="text" name="zip" id="zip" className={inputStyle} />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="email" className={labelStyle}>
+            E-Mail:
+          </label>
+          <input type="email" name="email" id="email" className={inputStyle} />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="password" className={labelStyle}>
+            Passwort:
+          </label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            className={inputStyle}
+          />
+        </div>
+        <div className="pt-3">
+          <label htmlFor="confirmPassword" className={labelStyle}>
+            Passwort bestätigen:
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            className={inputStyle}
+          />
         </div>
       </div>
-    </section>
+
+      <button className={buttonStyle}>Abschicken</button>
+    </form>
   );
 };
 

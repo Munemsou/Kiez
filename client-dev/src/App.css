@@ -10,14 +10,12 @@
 } 
 
 
-.darkThemeColor,
-.dropdown-menu a{
+.darkThemeColor{
     background-color: #334155;
     color:#e5e7eb ;
     background-attachment: fixed;
 }
-.lightThemeColor,
-.dropdown-menu a{
+.lightThemeColor{
     background-color: #e5e7eb;
     color: #334155;
 }

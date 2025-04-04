@@ -1,27 +1,47 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext.jsx';
-import { buttonStyle } from '../reuseable/styles/reuseableComponents.jsx';
 import { GroupsContext } from '../context/groupsContext.jsx';
+import { getBaseUrl } from '../../utils/envUtils.js';
 
 const UserLogout = () => {
   const { setIsLoggedIn } = useContext(UserContext);
   const { groupsData } = useContext(GroupsContext);
   const navigate = useNavigate();
 
+  const baseUrl = getBaseUrl();
+
   const logout = async () => {
-    const response = await fetch("http://localhost:5500/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    console.log(response);
-    setIsLoggedIn(false);
-    localStorage.clear();
-    console.log("Logout LOG groupsData Context", groupsData);
-    navigate("/login");
+    const path = 'logout'; // Adjust this path based on your API endpoint
+
+    try {
+      console.log(`Making POST request to: ${baseUrl}/${path}`);
+
+      const response = await fetch(`${baseUrl}/${path}`, {
+        method: 'POST',
+        credentials: 'include', // Include cookies with request
+      });
+
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+
+      console.log('Logout response:', response);
+      setIsLoggedIn(false);
+      localStorage.clear();
+      console.log('Logout LOG groupsData Context', groupsData);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
-  logout()
-  /* return <button onClick={logout} className={buttonStyle}>Log Out</button>; */
+
+  // Use `useEffect` to trigger logout only on component mount
+  useEffect(() => {
+    logout();
+  }, []);
+
+  return null; // Return null or a loading indicator
 };
 
 export default UserLogout;
