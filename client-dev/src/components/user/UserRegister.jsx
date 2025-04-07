@@ -1,194 +1,235 @@
-import {
-  buttonStyle,
-  inputStyle,
-  labelStyle,
-} from "../reuseable/styles/reuseableComponents.jsx";
-import { getBaseUrl } from '../../utils/envUtils.js';
-import { useState } from 'react';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { postData } from "../reuseable/fetchData.jsx";
+import "../reuseable/styles/reusableFormComponents.css";
+import "../reuseable/styles/reusableGlobal.css";
 
 const UserRegister = () => {
-  const baseUrl = getBaseUrl();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [zip, setZip] = useState("");
+  const [street, setStreet] = useState("");
+  const [number, setNumber] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
     setSuccess(null);
 
-    const el = event.target.elements;
-
-    const body = {
-      firstName: el.firstName.value,
-      lastName: el.lastName.value,
-      email: el.email.value,
-      password: el.password.value,
-      confirmPassword: el.confirmPassword.value,
-      address: [
-        {
-          zip: el.zip.value,
-          street: el.street.value,
-          number: el.number.value,
-        },
-      ],
-    };
-
-    if (body.password !== body.confirmPassword) {
+    if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      setLoading(false);
       return;
     }
 
+    const body = {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      address: [{ zip, street, number }],
+    };
+
     try {
-      const geoCodeData = await getGeoCodeData(body.address);
-
-      if (!geoCodeData) {
-        setError("Failed to retrieve geocode data.");
-        setLoading(false);
-        return;
-      }
-
-      const bodyWithGeo = {
-        ...body,
-        geoCode: [geoCodeData[0], geoCodeData[1]],
-      };
-
-      const response = await fetch(`${baseUrl}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyWithGeo),
-      });
-
-      if (!response.ok) {
-        throw new Error('Registration failed');
-      }
-
-      const data = await response.json();
+      const data = await postData("register", body);
       setSuccess("Registration successful!");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setZip("");
+      setStreet("");
+      setNumber("");
       navigate("/login");
-      event.target.reset();
     } catch (error) {
-      setError(`Registration error: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getGeoCodeData = async (address) => {
-    try {
-      const queryString = `${address[0].number}+${address[0].street}+${address[0].zip}`;
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${queryString}`
-      );
-      const data = await response.json();
-
-      if (data && data.length > 0) {
-        const latitude = parseFloat(data[0].lat);
-        const longitude = parseFloat(data[0].lon);
-        return [latitude, longitude];
-      } else {
-        console.error("No geocode data found.");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error during geocoding:", error);
-      return null;
+      console.error("Registration failed:", error.message);
+      setError("Registration failed. Please try again.");
     }
   };
 
   return (
-    <form
-      className="h-fit flex flex-col justify-center gap-3 bg-white dark:bg-slate-800 rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl"
-      onSubmit={submitHandler}
-    >
-      <div className="p-2 bg-slate-500/15 shadow-lg rounded w-full gap-2">
-        <div>
-          <label htmlFor="firstName" className={labelStyle}>
-            Vorname:
-          </label>
-          <input
-            type="text"
-            name="firstName"
-            id="firstName"
-            className={inputStyle}
-            required
-          />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="lastName" className={labelStyle}>
-            Nachname:
-          </label>
-          <input
-            type="text"
-            name="lastName"
-            id="lastName"
-            className={inputStyle}
-            required
-          />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="street" className={labelStyle}>
-            Straße:
-          </label>
-          <input type="text" name="street" id="street" className={inputStyle} required />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="number" className={labelStyle}>
-            Haus-Nr:
-          </label>
-          <input type="text" name="number" id="number" className={inputStyle} required />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="zip" className={labelStyle}>
-            PLZ:
-          </label>
-          <input type="text" name="zip" id="zip" className={inputStyle} required />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="email" className={labelStyle}>
-            E-Mail:
-          </label>
-          <input type="email" name="email" id="email" className={inputStyle} required />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="password" className={labelStyle}>
-            Passwort:
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            className={inputStyle}
-            required
-          />
-        </div>
-        <div className="pt-3">
-          <label htmlFor="confirmPassword" className={labelStyle}>
-            Passwort bestätigen:
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            id="confirmPassword"
-            className={inputStyle}
-            required
-          />
+    <section className="flex justify-center mt-64 items-center w-full">
+      <div className="reusableGlobalBackground absolute"></div>
+      <div className="reusableGlobalBackground absolute"></div>
+      <div className="reusableGlobalBackground absolute"></div>
+      <div className="relative">
+        <div className="reusableSquare absolute" style={{ "--i": 0 }}></div>
+        <div className="reusableSquare absolute" style={{ "--i": 1 }}></div>
+        <div className="reusableSquare absolute" style={{ "--i": 2 }}></div>
+        <div className="reusableSquare absolute" style={{ "--i": 3 }}></div>
+        <div className="reusableSquare absolute" style={{ "--i": 4 }}></div>
+        <div className="reusableContainer reusableBorder">
+          <form className="reusableForm" onSubmit={submitHandler}>
+            <div>
+              <h2 className="mb-6 text-3xl font-bold text-center text-gray-800 dark:text-white">
+                Register
+              </h2>
+              {error && (
+                <div className="mb-4 text-center text-red-500">{error}</div>
+              )}
+              {success && (
+                <div className="mb-4 text-center text-green-500">{success}</div>
+              )}
+              <div className="mb-4">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  First Name:
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Last Name:
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  E-Mail:
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Confirm Password:
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="zip"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  ZIP:
+                </label>
+                <input
+                  type="text"
+                  name="zip"
+                  id="zip"
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="street"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Street:
+                </label>
+                <input
+                  type="text"
+                  name="street"
+                  id="street"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="number"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  House Number:
+                </label>
+                <input
+                  type="text"
+                  name="number"
+                  id="number"
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  className="w-full px-3 py-2 mt-1 text-gray-700 border rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                  required
+                />
+              </div>
+              <button type="submit" className="reusableFormBtn">
+                Register
+              </button>
+              <div className="mt-4 text-center">
+                <a
+                  href="/login"
+                  className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                >
+                  Already have an account? Login
+                </a>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-
-      <button className={buttonStyle} disabled={loading}>
-        {loading ? 'Lädt...' : 'Abschicken'}
-      </button>
-
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {success && <p className="text-green-500 mt-2">{success}</p>}
-    </form>
+    </section>
   );
 };
 
