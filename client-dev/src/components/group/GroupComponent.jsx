@@ -7,7 +7,7 @@ import GroupPostCard from "./GroupPostCard.jsx";
 import "../reuseable/styles/reusableGlobal.css";
 import "../reuseable/styles/reusableFormComponents.css";
 import MitteilungForm from "../mainComponents/createPost-Components/MitteilungForm.jsx";
-import Avatar from "../../../public/avatar-placeholder.png";
+import Avatar from "../../../src/avatar-placeholder.png";
 
 const GroupComponent = () => {
   const { groupId } = useParams();

@@ -1,4 +1,4 @@
-import Avatar from "../../../public/avatar-placeholder.png";
+import Avatar from "../../../src/avatar-placeholder.png";
 
 const GroupPostCard = ({ post }) => {
   //userdaten für das ProfilBild
